@@ -308,69 +308,27 @@ function greatestProduct(arr) {
 // 8.2 Product of Diagonals
 function greatestProductOfDiagonals(arr) {
   let positionOfNum = "";
-  let upLeftSequence = "";
-  let upRightSequence = "";
   let downLeftSequence = "";
   let downRightSequence = "";
-  let upLeftProduct = 0;
-  let upRightProduct = 0;
   let downLeftProduct = 0;
   let downRightProduct = 0;
 
   arr.forEach((element, index, array) => {
     element.forEach((e, i) => {
       if (
-        (index - 3 >= 0 && i - 3 >= 0) ||
-        (index - 3 >= 0 && i + 3 <= element.length - 1) ||
         (index + 3 <= arr.length - 1 && i - 3 >= 0) ||
         (index + 3 <= arr.length - 1 && i + 3 <= element.length - 1)
       ) {
-        if (index - 3 >= 0 && i - 3 >= 0) {
-          const currentUpLeftProduct =
-            e *
-            array[index - 1][i - 1] *
-            array[index - 2][i - 2] *
-            array[index - 3][i - 3];
-          if (currentUpLeftProduct > upLeftProduct) {
-            positionOfNum = `[${index}][${i}]`;
-            upLeftSequence = `${e} * ${array[index - 1][i - 1]} * ${
-              array[index - 2][i - 2]
-            } * ${array[index - 3][i - 3]}`;
-            upLeftProduct = currentUpLeftProduct;
-          }
-        } else if (index - 3 >= 0 && i + 3 <= element.length - 1) {
-          const currentUpRightProduct =
-            e *
-            array[index - 1][i + 1] *
-            array[index - 2][i + 2] *
-            array[index - 3][i + 3];
-          if (currentUpRightProduct > upRightProduct) {
-            positionOfNum = `[${index}][${i}]`;
-            upRightSequence = `${e} * ${array[index - 1][i + 1]} * ${
-              array[index - 2][i + 2]
-            } * ${array[index - 3][i + 3]}`;
-            upRightProduct = currentUpRightProduct;
-          }
-        } else if (index + 3 <= arr.length - 1 && i - 3 >= 0) {
-          const currentDownLeftProduct =
-            e *
-            array[index + 1][i - 1] *
-            array[index + 2][i - 2] *
-            array[index + 3][i - 3];
-          if (currentDownLeftProduct > downLeftProduct) {
-            positionOfNum = `[${index}][${i}]`;
-            downLeftSequence = `${e} * ${array[index + 1][i - 1]} * ${
-              array[index + 2][i - 2]
-            } * ${array[index + 3][i - 3]}`;
-            downLeftProduct = currentDownLeftProduct;
-          }
-        } else if (index + 3 <= arr.length - 1 && i + 3 <= element.length - 1) {
+        if (index + 3 <= arr.length - 1 && i + 3 <= element.length - 1) {
           const currentDownRightProduct =
             e *
             array[index + 1][i + 1] *
             array[index + 2][i + 2] *
             array[index + 3][i + 3];
-          if (currentDownRightProduct > downRightProduct) {
+          if (
+            currentDownRightProduct > downRightProduct &&
+            currentDownRightProduct > downLeftProduct
+          ) {
             positionOfNum = `[${index}][${i}]`;
             downRightSequence = `${e} * ${array[index + 1][i + 1]} * ${
               array[index + 2][i + 2]
@@ -378,48 +336,43 @@ function greatestProductOfDiagonals(arr) {
             downRightProduct = currentDownRightProduct;
           }
         }
+        if (index + 3 <= arr.length - 1 && i - 3 >= 0) {
+          const currentDownLeftProduct =
+            e *
+            array[index + 1][i - 1] *
+            array[index + 2][i - 2] *
+            array[index + 3][i - 3];
+          if (
+            currentDownLeftProduct > downLeftProduct &&
+            currentDownLeftProduct > downRightProduct
+          ) {
+            positionOfNum = `[${index}][${i}]`;
+            downLeftSequence = `${e} * ${array[index + 1][i - 1]} * ${
+              array[index + 2][i - 2]
+            } * ${array[index + 3][i - 3]}`;
+            downLeftProduct = currentDownLeftProduct;
+          }
+        }
       }
     });
   });
 
-  if (
-    Math.max(
-      upLeftProduct,
-      upRightProduct,
-      downLeftProduct,
-      downRightProduct
-    ) === upLeftProduct
-  ) {
-    return `Largest product starts at ${positionOfNum} in Up-Left direction: ${upLeftSequence} = ${upLeftProduct}`;
-  } else if (
-    Math.max(
-      upLeftProduct,
-      upRightProduct,
-      downLeftProduct,
-      downRightProduct
-    ) === upRightProduct
-  ) {
-    return `Largest product starts at ${positionOfNum} in Up-Right direction: ${upRightSequence} = ${upRightProduct}`;
-  } else if (
-    Math.max(
-      upLeftProduct,
-      upRightProduct,
-      downLeftProduct,
-      downRightProduct
-    ) === downLeftProduct
-  ) {
-    return `Largest product starts at ${positionOfNum} in Down-Left direction: ${downLeftSequence} = ${downLeftProduct}`;
-  } else if (
-    Math.max(
-      upLeftProduct,
-      upRightProduct,
-      downLeftProduct,
-      downRightProduct
-    ) === downRightProduct
-  ) {
-    return `Largest product starts at ${positionOfNum} in Down-Right direction: ${downRightSequence} = ${downRightProduct}`;
+  if (Math.max(downLeftProduct, downRightProduct) === downRightProduct) {
+    return `Largest product starts at ${positionOfNum} going in the Down-Right direction: ${downRightSequence} = ${downRightProduct}`;
+  } else if (Math.max(downLeftProduct, downRightProduct) === downLeftProduct) {
+    return `Largest product starts at ${positionOfNum} going in the Down-Left direction: ${downLeftSequence} = ${downLeftProduct}`;
   }
 }
+
+console.log(greatestProductOfDiagonals(matrix));
+
+// console.log(greatestProductOfDiagonals([
+//   [20, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 20]
+// ]))
 
 // The following is required to make unit tests work.
 /* Environment setup. Do not modify the below code. */
