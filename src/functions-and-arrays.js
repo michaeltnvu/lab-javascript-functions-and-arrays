@@ -199,7 +199,16 @@ function howManyTimes(arr, word) {
 }
 
 // Iteration #8: Bonus
-const matrix = [
+// Iteration #8.1: Product of adjacent numbers
+const firstMatrix = [
+  [1, 2, 3, 4, 5],
+  [1, 20, 3, 4, 5],
+  [1, 20, 3, 4, 5],
+  [1, 20, 3, 4, 5],
+  [1, 4, 3, 4, 5],
+];
+
+const secondMatrix = [
   [8, 2, 22, 97, 38, 15, 0, 40, 0, 75, 4, 5, 7, 78, 52, 12, 50, 77, 91, 8],
   [
     49, 49, 99, 40, 17, 81, 18, 57, 60, 87, 17, 40, 98, 43, 69, 48, 4, 56, 62,
@@ -265,110 +274,150 @@ const matrix = [
 ];
 
 function greatestProduct(arr) {
+  let horizontalNumbers = "";
+  let verticalNumbers = "";
   let horizontalProduct = 0;
   let verticalProduct = 0;
 
-  arr.forEach((element) => {
-    element.forEach((number, index, array) => {
+  arr.forEach((element, index, array) => {
+    element.forEach((e, i, a) => {
       if (array[index + 3] !== undefined) {
-        let thisProduct =
-          array[index] * array[index + 1] * array[index + 2] * array[index + 3];
-        if (thisProduct > horizontalProduct) {
-          horizontalProduct = thisProduct;
+        const currentVerticalProduct =
+          e * array[index + 1][i] * array[index + 2][i] * array[index + 3][i];
+        if (currentVerticalProduct > verticalProduct) {
+          verticalNumbers = `${e} * ${array[index + 1][i]} * ${
+            array[index + 2][i]
+          } * ${array[index + 3][i]}`;
+          verticalProduct = currentVerticalProduct;
         }
-      }
-    });
-  });
-
-  arr.forEach((element, i, arr) => {
-    element.forEach((number, index, array) => {
-      if (arr[i + 3]) {
-        let thisProduct =
-          arr[i][index] *
-          arr[i + 1][index] *
-          arr[i + 2][index] *
-          arr[i + 3][index];
-        if (thisProduct > verticalProduct) {
-          verticalProduct = thisProduct;
+      } else if (a[i + 3] !== undefined) {
+        const currentHorizontalProduct = e * a[i + 1] * a[i + 2] * a[i + 3];
+        if (currentHorizontalProduct > horizontalProduct) {
+          horizontalNumbers = `${e} * ${a[i + 1]} * ${a[i + 2]} * ${a[i + 3]}`;
+          horizontalProduct = currentHorizontalProduct;
         }
       }
     });
   });
 
   return horizontalProduct > verticalProduct
-    ? horizontalProduct
-    : verticalProduct;
+    ? `Horizontal: ${horizontalNumbers} = ${horizontalProduct}`
+    : `Vertical: ${verticalNumbers} = ${verticalProduct}`;
 }
 
 // 8.2 Product of Diagonals
 function greatestProductOfDiagonals(arr) {
-  let upLeft = 0;
-  let upRight = 0;
-  let downLeft = 0;
-  let downRight = 0;
+  let positionOfNum = "";
+  let upLeftSequence = "";
+  let upRightSequence = "";
+  let downLeftSequence = "";
+  let downRightSequence = "";
+  let upLeftProduct = 0;
+  let upRightProduct = 0;
+  let downLeftProduct = 0;
+  let downRightProduct = 0;
 
-  if (arr.length > 0) {
-    arr.forEach((element, i, a) => {
-      if (a.length > 0) {
-        element.forEach((number, index, array) => {
-          if (array[index - 3] !== undefined && a[i - 3] !== undefined) {
-            let thisNumber =
-              number *
-              a[i - 1][index - 1] *
-              a[i - 2][index - 2] *
-              a[i - 3][index - 3];
-            if (thisNumber > upLeft) {
-              upLeft = thisNumber;
-            }
-          } else if (array[index + 3] !== undefined && a[i - 3] !== undefined) {
-            let thisNumber =
-              number *
-              a[i - 1][index + 1] *
-              a[i - 2][index + 2] *
-              a[i - 3][index + 3];
-            if (thisNumber > upRight) {
-              upRight = thisNumber;
-            }
-          } else if (array[index - 3] !== undefined && a[i + 3] !== undefined) {
-            let thisNumber =
-              number *
-              a[i + 1][index - 1] *
-              a[i + 2][index - 2] *
-              a[i + 3][index - 3];
-            if (thisNumber > downLeft) {
-              downLeft = thisNumber;
-            }
-          } else if (
-            array[index + 3] !== undefined &&
-            arr[i + 3] !== undefined
-          ) {
-            let thisNumber =
-              number *
-              a[i + 1][index + 1] *
-              a[i + 2][index + 2] *
-              a[i + 3][index + 3];
-            if (thisNumber > downRight) {
-              downRight = thisNumber;
-            }
+  arr.forEach((element, index, array) => {
+    element.forEach((e, i) => {
+      if (
+        (index - 3 >= 0 && i - 3 >= 0) ||
+        (index - 3 >= 0 && i + 3 <= element.length - 1) ||
+        (index + 3 <= arr.length - 1 && i - 3 >= 0) ||
+        (index + 3 <= arr.length - 1 && i + 3 <= element.length - 1)
+      ) {
+        if (index - 3 >= 0 && i - 3 >= 0) {
+          const currentUpLeftProduct =
+            e *
+            array[index - 1][i - 1] *
+            array[index - 2][i - 2] *
+            array[index - 3][i - 3];
+          if (currentUpLeftProduct > upLeftProduct) {
+            positionOfNum = `[${index}][${i}]`;
+            upLeftSequence = `${e} * ${array[index - 1][i - 1]} * ${
+              array[index - 2][i - 2]
+            } * ${array[index - 3][i - 3]}`;
+            upLeftProduct = currentUpLeftProduct;
           }
-        });
-      } else {
-        console.log(`Not enough elements in this array`);
+        } else if (index - 3 >= 0 && i + 3 <= element.length - 1) {
+          const currentUpRightProduct =
+            e *
+            array[index - 1][i + 1] *
+            array[index - 2][i + 2] *
+            array[index - 3][i + 3];
+          if (currentUpRightProduct > upRightProduct) {
+            positionOfNum = `[${index}][${i}]`;
+            upRightSequence = `${e} * ${array[index - 1][i + 1]} * ${
+              array[index - 2][i + 2]
+            } * ${array[index - 3][i + 3]}`;
+            upRightProduct = currentUpRightProduct;
+          }
+        } else if (index + 3 <= arr.length - 1 && i - 3 >= 0) {
+          const currentDownLeftProduct =
+            e *
+            array[index + 1][i - 1] *
+            array[index + 2][i - 2] *
+            array[index + 3][i - 3];
+          if (currentDownLeftProduct > downLeftProduct) {
+            positionOfNum = `[${index}][${i}]`;
+            downLeftSequence = `${e} * ${array[index + 1][i - 1]} * ${
+              array[index + 2][i - 2]
+            } * ${array[index + 3][i - 3]}`;
+            downLeftProduct = currentDownLeftProduct;
+          }
+        } else if (index + 3 <= arr.length - 1 && i + 3 <= element.length - 1) {
+          const currentDownRightProduct =
+            e *
+            array[index + 1][i + 1] *
+            array[index + 2][i + 2] *
+            array[index + 3][i + 3];
+          if (currentDownRightProduct > downRightProduct) {
+            positionOfNum = `[${index}][${i}]`;
+            downRightSequence = `${e} * ${array[index + 1][i + 1]} * ${
+              array[index + 2][i + 2]
+            } * ${array[index + 3][i + 3]}`;
+            downRightProduct = currentDownRightProduct;
+          }
+        }
       }
     });
-    console.log(
-      "upLeft",
-      upLeft,
-      "upRight",
-      upRight,
-      "downLeft",
-      downLeft,
-      "downRight",
-      downRight
-    );
-    return Math.max(upLeft, upRight, downLeft, downRight);
-  } else {
-    return `Matrix is too small`;
+  });
+
+  if (
+    Math.max(
+      upLeftProduct,
+      upRightProduct,
+      downLeftProduct,
+      downRightProduct
+    ) === upLeftProduct
+  ) {
+    return `Largest product starts at ${positionOfNum} in Up-Left direction: ${upLeftSequence} = ${upLeftProduct}`;
+  } else if (
+    Math.max(
+      upLeftProduct,
+      upRightProduct,
+      downLeftProduct,
+      downRightProduct
+    ) === upRightProduct
+  ) {
+    return `Largest product starts at ${positionOfNum} in Up-Right direction: ${upRightSequence} = ${upRightProduct}`;
+  } else if (
+    Math.max(
+      upLeftProduct,
+      upRightProduct,
+      downLeftProduct,
+      downRightProduct
+    ) === downLeftProduct
+  ) {
+    return `Largest product starts at ${positionOfNum} in Down-Left direction: ${downLeftSequence} = ${downLeftProduct}`;
+  } else if (
+    Math.max(
+      upLeftProduct,
+      upRightProduct,
+      downLeftProduct,
+      downRightProduct
+    ) === downRightProduct
+  ) {
+    return `Largest product starts at ${positionOfNum} in Down-Right direction: ${downRightSequence} = ${downRightProduct}`;
   }
 }
 
